@@ -31,9 +31,7 @@ const posts = [
 ]
 
 app.get('/todos', authenticateToken, (req, res) => {
-  console.log(req.user.name);
   const result = posts.filter(post => post.username.toLowerCase() === req.user.name)
-  console.log({ result });
   res.json(result)
 })
 
@@ -43,7 +41,6 @@ function authenticateToken(req, res, next) {
   if (token == null) return res.sendStatus(401)
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    console.log(err)
     if (err) return res.sendStatus(403)
     req.user = user
     next()
@@ -68,16 +65,10 @@ app.delete('/logout', (req, res) => {
 
 app.post('/login', (req, res) => {
   // Authenticate User
-
-
-  console.log(req.body);
   const username = req.body.username
-
   const password = req.body.password
 
   const userExists = users.find(user => user.username.toLowerCase() === username.toLowerCase())
-  console.log({ userExists });
-
   if (!userExists) return res.status(401).json({ message: "User doesn't exist" })
   if (userExists.password !== password) return res.status(403).json({ message: "Invalid credentials" })
 
